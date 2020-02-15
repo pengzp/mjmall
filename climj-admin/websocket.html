@@ -1,0 +1,42 @@
+<html>
+<title>创建websocket项目</title>
+<body>
+    <button onclick="websocketOpen()">open</button>
+    <!--客户端发送请求-->
+    <input id="msg"/><button onclick="subSend()">send</button>
+    <!--服务器的请求-->
+    <input id="dv"/>
+</body>
+</html>
+<script type="text/javascript">
+    function websocketOpen(){
+        //判断浏览器兼容性
+        //设置全局变量
+        var ws;//一个ws对象就相当于一个websocket的通信管道
+        //target对应到后端的EchoWebSorket的@ServerEndpoint("/echo")
+        var target="ws://localhost:8080/websocket_01/echo"
+        if('WebSocket'in window){
+            ws=new WebSocket(target);
+            //判断是否可以在火狐运行
+        }else if("MozWebSocket"in window){
+            ws = new MozWebSocket(target);
+        }else{
+            alert("websocket不支持浏览器");
+            return;
+        }
+        //发送信息  后台接收信息   给服务端发消息
+        function subSend(){
+            var msg = document.getElementById("msg").value;
+            ws.subSend();
+            document.getElementById("msg").value = "";
+            //var msg=""
+        }
+        //调用发送信息方法,查看内容
+        ws.onmessage=function(even){
+            //获取服务端端的请求
+            var dv =document.getElementById("dv");
+            //将服务器端的请求解析为内容
+            dv.innerHTML += event.data;
+        }
+    }
+</script>
